@@ -1,0 +1,18 @@
+克隆一台kvm机子
+在有kvm的机子执行
+rhel6.5 是 kvm 中存在的机子名称。 /etc/libvirt/qemu/rhel6.5.xml
+rhel6clone 
+#!/bin/bash
+read -p "请输入主机的名称:" rhel6clone
+
+if  [ -f /etc/libvirt/qemu/$Cl.xml ]
+then
+  virsh destroy $Cl
+  virsh undefine $Cl
+  rm -fr /var/lib/libvirt/images/$Cl.*
+fi
+
+  virt-clone -o rhel6.5 -n $CG -f /var/lib/libvirt/images/$Cl.img
+  sed -i "s/domain-rhel6.5/domain-$Cl/" /etc/libvirt/qemu/$Cl.xml
+  virsh define /etc/libvirt/qemu/$Cl.xml
+  virsh start $Cl
